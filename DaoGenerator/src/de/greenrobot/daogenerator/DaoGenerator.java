@@ -113,7 +113,7 @@ public class DaoGenerator {
                     System.out.println("Skipped " + javaFilename.getCanonicalPath());
                 }
             }
-            for (ContentProvider contentProvider : entity.getContentProviders()) {
+            for (ContentProvider contentProvider : schema.getContentProviders()) {
                 Map<String, Object> additionalObjectsForTemplate = new HashMap<String, Object>();
                 additionalObjectsForTemplate.put("contentProvider", contentProvider);
                 generate(templateContentProvider, outDirFile, entity.getJavaPackage(), entity.getClassName()

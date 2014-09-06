@@ -17,9 +17,14 @@
  */
 package de.greenrobot.daogenerator;
 
-import de.greenrobot.daogenerator.Property.PropertyBuilder;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
-import java.util.*;
+import de.greenrobot.daogenerator.Property.PropertyBuilder;
 
 /**
  * Model class for an entity: a Java data object mapped to a data base table. A new entity is added to a {@link Schema}
@@ -48,7 +53,8 @@ public class Entity {
     private final Collection<String> additionalImportsEntity;
     private final Collection<String> additionalImportsDao;
     private final List<String> interfacesToImplement;
-    private final List<ContentProvider> contentProviders;
+    //private final List<ContentProvider> contentProviders;
+    private ContentProvider contentProvider;
 
     private String tableName;
     private String classNameDao;
@@ -82,7 +88,7 @@ public class Entity {
         additionalImportsEntity = new TreeSet<String>();
         additionalImportsDao = new TreeSet<String>();
         interfacesToImplement = new ArrayList<String>();
-        contentProviders = new ArrayList<ContentProvider>();
+        //contentProviders = new ArrayList<ContentProvider>();
         constructors = true;
     }
 
@@ -227,10 +233,11 @@ public class Entity {
         incomingToManyRelations.add(toMany);
     }
 
-    public ContentProvider addContentProvider() {
+    public ContentProvider addContentProvider(ContentProvider contentProvider) {
         List<Entity> entities = new ArrayList<Entity>();
-        ContentProvider contentProvider = new ContentProvider(schema, entities);
-        contentProviders.add(contentProvider);
+        //ContentProvider contentProvider = new ContentProvider(schema, entities);
+        //this.contentProviders = contentProvider;
+	contentProvider.addEntity(this);
         return contentProvider;
     }
 
@@ -415,8 +422,8 @@ public class Entity {
         return interfacesToImplement;
     }
 
-    public List<ContentProvider> getContentProviders() {
-        return contentProviders;
+    public ContentProvider getContentProviders() {
+        return contentProvider;
     }
 
     public void implementsInterface(String... interfaces) {
@@ -490,9 +497,9 @@ public class Entity {
 
         init2ndPassIndexNamesWithDefaults();
 
-        for (ContentProvider contentProvider : contentProviders) {
-            contentProvider.init2ndPass();
-        }
+	//for (ContentProvider contentProvider : contentProviders) {
+	//contentProvider.init2ndPass();
+	//}
     }
 
     protected void init2nPassNamesWithDefaults() {

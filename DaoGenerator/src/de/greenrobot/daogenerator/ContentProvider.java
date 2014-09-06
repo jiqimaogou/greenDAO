@@ -1,9 +1,10 @@
 package de.greenrobot.daogenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ContentProvider {
-    private final List<Entity> entities;
+    private final List<Entity> entities = new ArrayList<Entity>();
     private String authority;
     private String basePath;
     private String className;
@@ -11,9 +12,15 @@ public class ContentProvider {
     private boolean readOnly;
     private Schema schema;
 
-    public ContentProvider(Schema schema, List<Entity> entities) {
+    public ContentProvider(Schema schema) {
         this.schema = schema;
-        this.entities = entities;
+    }
+
+    public void addEntity(Entity entity) {
+        if (entity == null) {
+            throw new NullPointerException("entity is null");
+        }
+        entities.add(entity);
     }
 
     public String getAuthority() {

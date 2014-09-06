@@ -1,5 +1,6 @@
 package de.greenrobot.daoexample;
 
+import java.util.*;
 import java.util.List;
 import java.util.ArrayList;
 import android.database.Cursor;
@@ -8,6 +9,7 @@ import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
+import de.greenrobot.dao.internal.SqlUtils;
 import de.greenrobot.dao.internal.SqlUtils;
 import de.greenrobot.dao.internal.DaoConfig;
 import de.greenrobot.dao.query.Query;
@@ -29,7 +31,7 @@ public class OrderDao extends AbstractDao<Order, Long> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Date = new Property(1, java.util.Date.class, "date", false, "DATE");
+        public final static Property Date = new Property(1, Date.class, "date", false, "DATE");
         public final static Property CustomerId = new Property(2, long.class, "customerId", false, "CUSTOMER_ID");
     };
 
@@ -61,7 +63,7 @@ public class OrderDao extends AbstractDao<Order, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
+    /*[>* @inheritdoc <]
     @Override
     protected void bindValues(SQLiteStatement stmt, Order entity) {
         stmt.clearBindings();
@@ -71,12 +73,12 @@ public class OrderDao extends AbstractDao<Order, Long> {
             stmt.bindLong(1, id);
         }
  
-        java.util.Date date = entity.getDate();
+        Date date = entity.getDate();
         if (date != null) {
             stmt.bindLong(2, date.getTime());
         }
         stmt.bindLong(3, entity.getCustomerId());
-    }
+    }*/
 
     @Override
     protected void attachEntity(Order entity) {
@@ -240,4 +242,42 @@ public class OrderDao extends AbstractDao<Order, Long> {
         return loadDeepAllAndCloseCursor(cursor);
     }
  
+	public SQLiteStatement getInsertStatement(Order entity) {
+		ArrayList<String> insertColumnsList = new ArrayList<String>();
+		if (entity.getId() != null) {
+			insertColumnsList.add(Properties.Id.columnName);
+		}
+		if (entity.getDate() != null) {
+			insertColumnsList.add(Properties.Date.columnName);
+		}
+		if (entity.getCustomerId() != 0) {
+			insertColumnsList.add(Properties.CustomerId.columnName);
+		}
+		String[] insertColumns = new String[insertColumnsList.size()];
+		insertColumnsList.toArray(insertColumns);
+		String sql = SqlUtils.createSqlInsert("INSERT INTO ", TABLENAME, insertColumns);
+		SQLiteStatement insertStatement = db.compileStatement(sql); 
+		return insertStatement;
+	}
+
+	/** @inheritdoc */
+	@Override
+	protected void bindValues(SQLiteStatement stmt, Order entity) {
+		stmt.clearBindings();
+		int i = 1;
+ 
+		Long id = entity.getId();
+		if (id != null) {
+			stmt.bindLong(i++, id );
+		}
+ 
+		Date date = entity.getDate();
+		if (date != null) {
+			stmt.bindLong(i++, date .getTime());
+		}
+		Long CustomerId = entity.getCustomerId();
+		if (CustomerId != 0) {
+			stmt.bindLong(i++, entity.getCustomerId()  );
+		}
+		}
 }

@@ -17,6 +17,7 @@
  */
 package de.greenrobot.daogenerator.gentest;
 
+import de.greenrobot.daogenerator.ContentProvider;
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Property;
@@ -80,7 +81,11 @@ public class TestDaoGenerator {
         simple.addStringProperty("simpleString");
         simple.addByteArrayProperty("simpleByteArray");
         
-        simple.addContentProvider().readOnly();
+	ContentProvider contentProvider = new ContentProvider(schema);
+	contentProvider.readOnly(); 
+	simple.addContentProvider(contentProvider);
+        
+        //simple.addContentProvider().readOnly();
     }
 
     protected void createSimpleNotNull() {

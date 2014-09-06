@@ -1,11 +1,13 @@
 package de.greenrobot.daoexample;
 
+import java.util.*;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
+import de.greenrobot.dao.internal.SqlUtils;
 import de.greenrobot.dao.internal.DaoConfig;
 
 import de.greenrobot.daoexample.Customer;
@@ -53,7 +55,7 @@ public class CustomerDao extends AbstractDao<Customer, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
+    /*[>* @inheritdoc <]
     @Override
     protected void bindValues(SQLiteStatement stmt, Customer entity) {
         stmt.clearBindings();
@@ -63,7 +65,7 @@ public class CustomerDao extends AbstractDao<Customer, Long> {
             stmt.bindLong(1, id);
         }
         stmt.bindString(2, entity.getName());
-    }
+    }*/
 
     @Override
     protected void attachEntity(Customer entity) {
@@ -117,4 +119,34 @@ public class CustomerDao extends AbstractDao<Customer, Long> {
         return true;
     }
     
+	public SQLiteStatement getInsertStatement(Customer entity) {
+		ArrayList<String> insertColumnsList = new ArrayList<String>();
+		if (entity.getId() != null) {
+			insertColumnsList.add(Properties.Id.columnName);
+		}
+		if (entity.getName() != null) {
+			insertColumnsList.add(Properties.Name.columnName);
+		}
+		String[] insertColumns = new String[insertColumnsList.size()];
+		insertColumnsList.toArray(insertColumns);
+		String sql = SqlUtils.createSqlInsert("INSERT INTO ", TABLENAME, insertColumns);
+		SQLiteStatement insertStatement = db.compileStatement(sql); 
+		return insertStatement;
+	}
+
+	/** @inheritdoc */
+	@Override
+	protected void bindValues(SQLiteStatement stmt, Customer entity) {
+		stmt.clearBindings();
+		int i = 1;
+ 
+		Long id = entity.getId();
+		if (id != null) {
+			stmt.bindLong(i++, id );
+		}
+		String Name = entity.getName();
+		if (Name != null) {
+			stmt.bindString(i++, entity.getName()  );
+		}
+		}
 }

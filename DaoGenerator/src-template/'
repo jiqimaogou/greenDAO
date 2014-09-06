@@ -310,7 +310,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 	public SQLiteStatement getInsertStatement(${entity.className} entity) {
 		ArrayList<String> insertColumnsList = new ArrayList<String>();
 	<#list entity.properties as property>
-		if (entity.get${property.propertyName?cap_first}() != ${toNullType[property.javaType]}) {
+		if (entity.get${property.propertyName?cap_first}() != null) {
 			insertColumnsList.add(Properties.${property.propertyName?cap_first}.columnName);
 		}
 	</#list>

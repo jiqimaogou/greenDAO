@@ -33,6 +33,7 @@ public class Schema {
     private String defaultJavaPackageDao;
     private String defaultJavaPackageTest;
     private final List<Entity> entities;
+    private final List<ContentProvider> contentProviders;
     private Map<PropertyType, String> propertyToDbType;
     private Map<PropertyType, String> propertyToJavaTypeNotNull;
     private Map<PropertyType, String> propertyToJavaTypeNullable;
@@ -43,6 +44,7 @@ public class Schema {
         this.version = version;
         this.defaultJavaPackage = defaultJavaPackage;
         this.entities = new ArrayList<Entity>();
+        this.contentProviders = new ArrayList<ContentProvider>();
         initTypeMappings();
     }
 
@@ -77,7 +79,7 @@ public class Schema {
         propertyToJavaTypeNotNull.put(PropertyType.Double, "double");
         propertyToJavaTypeNotNull.put(PropertyType.String, "String");
         propertyToJavaTypeNotNull.put(PropertyType.ByteArray, "byte[]");
-        propertyToJavaTypeNotNull.put(PropertyType.Date, "java.util.Date");
+        propertyToJavaTypeNotNull.put(PropertyType.Date, "Date");
 
         propertyToJavaTypeNullable = new HashMap<PropertyType, String>();
         propertyToJavaTypeNullable.put(PropertyType.Boolean, "Boolean");
@@ -89,7 +91,7 @@ public class Schema {
         propertyToJavaTypeNullable.put(PropertyType.Double, "Double");
         propertyToJavaTypeNullable.put(PropertyType.String, "String");
         propertyToJavaTypeNullable.put(PropertyType.ByteArray, "byte[]");
-        propertyToJavaTypeNullable.put(PropertyType.Date, "java.util.Date");
+        propertyToJavaTypeNullable.put(PropertyType.Date, "Date");
     }
 
     /**
@@ -158,6 +160,10 @@ public class Schema {
 
     public List<Entity> getEntities() {
         return entities;
+    }
+
+    public List<ContentProvider> getContentProviders() {
+        return contentProviders;
     }
 
     public boolean isHasKeepSectionsByDefault() {

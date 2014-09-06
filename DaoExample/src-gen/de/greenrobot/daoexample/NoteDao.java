@@ -1,11 +1,13 @@
 package de.greenrobot.daoexample;
 
+import java.util.*;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
+import de.greenrobot.dao.internal.SqlUtils;
 import de.greenrobot.dao.internal.DaoConfig;
 
 import de.greenrobot.daoexample.Note;
@@ -26,7 +28,7 @@ public class NoteDao extends AbstractDao<Note, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Text = new Property(1, String.class, "text", false, "TEXT");
         public final static Property Comment = new Property(2, String.class, "comment", false, "COMMENT");
-        public final static Property Date = new Property(3, java.util.Date.class, "date", false, "DATE");
+        public final static Property Date = new Property(3, Date.class, "date", false, "DATE");
     };
 
 
@@ -54,7 +56,7 @@ public class NoteDao extends AbstractDao<Note, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
+    /*[>* @inheritdoc <]
     @Override
     protected void bindValues(SQLiteStatement stmt, Note entity) {
         stmt.clearBindings();
@@ -70,11 +72,11 @@ public class NoteDao extends AbstractDao<Note, Long> {
             stmt.bindString(3, comment);
         }
  
-        java.util.Date date = entity.getDate();
+        Date date = entity.getDate();
         if (date != null) {
             stmt.bindLong(4, date.getTime());
         }
-    }
+    }*/
 
     /** @inheritdoc */
     @Override
@@ -126,4 +128,50 @@ public class NoteDao extends AbstractDao<Note, Long> {
         return true;
     }
     
+	public SQLiteStatement getInsertStatement(Note entity) {
+		ArrayList<String> insertColumnsList = new ArrayList<String>();
+		if (entity.getId() != null) {
+			insertColumnsList.add(Properties.Id.columnName);
+		}
+		if (entity.getText() != null) {
+			insertColumnsList.add(Properties.Text.columnName);
+		}
+		if (entity.getComment() != null) {
+			insertColumnsList.add(Properties.Comment.columnName);
+		}
+		if (entity.getDate() != null) {
+			insertColumnsList.add(Properties.Date.columnName);
+		}
+		String[] insertColumns = new String[insertColumnsList.size()];
+		insertColumnsList.toArray(insertColumns);
+		String sql = SqlUtils.createSqlInsert("INSERT INTO ", TABLENAME, insertColumns);
+		SQLiteStatement insertStatement = db.compileStatement(sql); 
+		return insertStatement;
+	}
+
+	/** @inheritdoc */
+	@Override
+	protected void bindValues(SQLiteStatement stmt, Note entity) {
+		stmt.clearBindings();
+		int i = 1;
+ 
+		Long id = entity.getId();
+		if (id != null) {
+			stmt.bindLong(i++, id );
+		}
+		String Text = entity.getText();
+		if (Text != null) {
+			stmt.bindString(i++, entity.getText()  );
+		}
+	 
+		String comment = entity.getComment();
+		if (comment != null) {
+			stmt.bindString(i++, comment );
+		}
+ 
+		Date date = entity.getDate();
+		if (date != null) {
+			stmt.bindLong(i++, date .getTime());
+		}
+	}
 }
